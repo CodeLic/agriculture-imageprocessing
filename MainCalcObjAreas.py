@@ -131,7 +131,6 @@ def calibrateCamera(chessimages):
     # 内部パラメータと歪み係数を返す
     return mtx, dist
 
-
 def tranceformingImage(images, mtx, dist):
     """
     (3)
@@ -166,7 +165,6 @@ def tranceformingImage(images, mtx, dist):
 
     # 補正した画像を返す
     return dst
-
 
 def calcObjectArea(image):
     """aruco
@@ -263,7 +261,6 @@ def calcObjectArea(image):
 
     return objAreas
 
-
 def mainCalcObjAreas():
     """
     メイン処理部分
@@ -280,8 +277,9 @@ def mainCalcObjAreas():
     # エンコードしたチェス盤画像のパス
     RESIZECBIMAGES = glob.glob('/home/pi/agriculture-imageprocessing/CVCameraCalibrateImages/D_ResizeChessPatternImages/*.jpg')
 
-    # 測定したい物体(パスを指定してあげる)
+    # 測定したい物体(パスを指定する)
     OBJECTIMAGEAS = glob.glob('/home/pi/agriculture-imageprocessing/CVCameraCalibrateImages/D_ResizeChessPatternImages/*.jpg')
+    # ##########################################################################################################################
 
     # (1)チェス盤画像エンコード
     resizeImage(CHESSBOARDIMAGES)
