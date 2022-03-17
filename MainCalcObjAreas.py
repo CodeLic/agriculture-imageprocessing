@@ -107,9 +107,6 @@ def calibrateCamera(chessimages):
             # 角を画像に描写
             img = cv2.drawChessboardCorners(img, CHECKERBOARD, corners2, ret)
 
-    # 画像の高さと幅を取得
-    h,w = img.shape[:2]
-
     """
     Performing camera calibration by
     passing the value of known 3D points (objpoints)
@@ -136,7 +133,7 @@ def tranceformingImage(images, mtx, dist):
     (3)
     (2)で取得した内部パラメータ、歪み係数を用いて物体撮影画像を広角補正
     Args:
-        images: 入力した物体画像
+        images: MAUE入力した物体画像
         mtx: (2)で取得した内部パラメータ
         dist: (2)で取得した歪み係数
         h: 画像の高さ
@@ -148,20 +145,20 @@ def tranceformingImage(images, mtx, dist):
     """
 
     # Using the derived camera parameters to undistort the image
-    for filepath in images:
+    # for filepath in images:
 
         # 画像の取得
-        img = cv2.imread(filepath)
+        # img = cv2.imread(filepath)
 
-        # リサイズした画像の高さ、幅の取得
-        h,w = img.shape[:2]
+    # リサイズした画像の高さ、幅の取得
+    h,w = images.shape[:2]
 
-        # Refining the camera matrix using parameters obtained by calibration
-        # ROI:Region Of Interest(対象領域)
-        newcameramtx, roi = cv2.getOptimalNewCameraMatrix(mtx, dist, (arucow,h), 1, (w,h))
+    # Refining the camera matrix using parameters obtained by calibration
+    # ROI:Region Of Interest(対象領域)
+    newcameramtx, roi = cv2.getOptimalNewCameraMatrix(mtx, dist, (w,h), 1, (w,h))
 
-        # Method 1 to undistort the image
-        dst = cv2.undistort(img, mtx, dist, None, newcameramtx)
+    # Method 1 to undistort the image
+    dst = cv2.undistort(images, mtx, dist, None, newcameramtx)
 
     # 補正した画像を返す
     return dst
@@ -179,17 +176,14 @@ def calcObjectArea(image):
     # ランドマークの頂点座標を格納する配列の宣言
     corners2 = [np.empty((1,4,2))]*4
 
-    # cv2.arucoのインスタンス
-    ARUCO = cv2.aruco
-
     # 4ブロック×4ブロックを50個使用可能
-    p_dict = ARUCO.getPredefinedDictionary(ARUCO.DICT_4X4_50)
+    p_dict = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_4X4_50)
 
     # ランドマーク検出
-    corners, ids, rejectedImgPoints = ARUCO.detectMarkers(image, p_dict)
+    corners, ids, rejectedImgPoints = cv2.aruco.detectMarkers(image, p_dict)
 
     # 検出結果を元画像に描写
-    img_marked = ARUCO.drawDetectedMarkers(img.copy(), corners, ids)
+    img_marked = cv2.aruco.drawDetectedMarkers(image.copy(), corners, ids)
 
     # BGR画像からRGB画像に変換
     img_marked_rgb = cv2.cvtColor(img_marked,cv2.COLOR_BGR2RGB)
@@ -210,15 +204,15 @@ def calcObjectArea(image):
 
     # フォーカスした画像の高さを計算
     h1 = ((corners2[0][0][2][0]-corners2[3][0][1][0])**2+(corners2[0][0][2][1]-corners2[3][0][1][1])**2)**0.5
-    h2 = ((corners2[2][0][0][0]-corners2メイン処理[1][0][3][0])**2+(corners2[2][0][0][1]-corners2[1][0][3][1])**2)**0.5
+    h2 = ((corners2[2][0][0][0]-corners2[1][0][3][0])**2+(corners2[2][0][0][1]-corners2[1][0][3][1])**2)**0.5
     hhh = (h1+h2)/2
-    print(hhh)
+    # print(hhh)
 
     # フォーカスした幅を計算
     w1 = ((corners2[0][0][2][0]-corners2[1][0][3][0])**2+(corners2[0][0][2][1]-corners2[1][0][3][1])**2)**0.5
     w2 = ((corners2[2][0][0][0]-corners2[3][0][1][0])**2+(corners2[2][0][0][1]-corners2[3][0][1][1])**2)**0.5
     www = (w1+w2)/2
-    print(www)
+    # print(www)
 
     # 変形後画像サイズ 縦横比は上記で計算したピクセルを参考にする。
     width, height = (int(www), int(hhh))
@@ -230,7 +224,7 @@ def calcObjectArea(image):
     trans_mat = cv2.getPerspectiveTransform(marker_coordinates,true_coordinates)
 
     # 台形補正
-    img_trans = cv2.warpPerspective(img,trans_mat,(width, height))
+    img_trans = cv2.warpPerspective(image,trans_mat,(width, height))
 
     # BGRからRGBに変換
     img_trans_rgb = cv2.cvtColor(img_trans,cv2.COLOR_BGR2RGB)
@@ -243,6 +237,7 @@ def calcObjectArea(image):
     _,p_binary = cv2.threshold(img_trans_gray,190,255,cv2.THRESH_BINARY)
     p_binary_rgb = cv2.cvtColor(p_binary,cv2.COLOR_GRAY2RGB)
     p_binary = cv2.bitwise_not(p_binary)
+    plt.imshow(p_binary_rgb)
 
     p_contours, _ = cv2.findContours(p_binary,cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
     p_and_contours = np.copy(img_trans)
@@ -278,7 +273,7 @@ def mainCalcObjAreas():
     RESIZECBIMAGES = glob.glob('/home/pi/agriculture-imageprocessing/CVCameraCalibrateImages/D_ResizeChessPatternImages/*.jpg')
 
     # 測定したい物体(パスを指定する)
-    OBJECTIMAGEAS = glob.glob('/home/pi/agriculture-imageprocessing/CVCameraCalibrateImages/D_ResizeChessPatternImages/*.jpg')
+    OBJECTIMAGEAS = glob.glob('/home/pi/agriculture-imageprocessing/CVCameraCalibrateImages/ElemImage/GUM_NANAME.jpg')
     # ##########################################################################################################################
 
     # (1)チェス盤画像エンコード
@@ -297,7 +292,7 @@ def mainCalcObjAreas():
     OBJECTAREAS = calcObjectArea(CALIBRATEIMAGE)
 
     # 検出した総面積の表示
-    print("総面積={:.2f}cm2" + OBJECTAREAS)
+    print("総面積={:.2f}cm2".format(OBJECTAREAS))
 
 if __name__ == '__main__':
     mainCalcObjAreas()
