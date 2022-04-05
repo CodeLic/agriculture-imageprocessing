@@ -1,10 +1,10 @@
-#ライブラリimport
+# ライブラリimport
 from urllib import response
 import cv2
 import requests
 
 # arucoのインスタンス
-aruco=cv2.aruco
+ARUCO=cv2.aruco
 
 # 判定用
 DICT = False
@@ -13,7 +13,7 @@ DICT = False
 URL = "http://192.168.2.164:8080/?action=snapshot"
 
 # 4ブロック×4ブロックを50個使用可能
-p_dict = aruco.getPredefinedDictionary(aruco.DICT_4X4_50)
+p_dict = ARUCO.getPredefinedDictionary(ARUCO.DICT_4X4_50)
 
 # 撮影した画像の受け取り
 response = requests.get(URL)
@@ -25,18 +25,17 @@ if(img):
 else:
     print("Undifind")
 
+# requestsで取得した画像をロカール保存
 with open("GetPic.jpg", "wb") as snapshot:
     snapshot.write(img)
 
-# imgに撮影した画像を格納していきましょう
-image = cv2.imread('/home/pi/agriculture-imageprocessing/GetPic.jpg')
+# 保存された画像を取得
+image = cv2.imread("/home/pi/agriculture-imageprocessing/GetPic.jpg")
 
-# False用テスト
-# img = cv2.imread('/content/drive/MyDrive/CVCameraCalibrateImages/ElemImage/SAMPLE_NEAR.jpg')
+# arucoマーカー検出
+corners, ids, rejectedImgPoints = ARUCO.detectMarkers(image, p_dict)
 
-# 検出
-corners, ids, rejectedImgPoints = aruco.detectMarkers(image, p_dict)
-
+# 検出してマーカのポイントを取得できた場合True判定
 if (rejectedImgPoints):
     DICT = True
     print(DICT)
