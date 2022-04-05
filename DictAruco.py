@@ -19,12 +19,14 @@ p_dict = aruco.getPredefinedDictionary(aruco.DICT_4X4_50)
 response = requests.get(URL)
 img = response.content
 
-
 # 取得確認表示
 if(img):
     print("GET_PICS")
 else:
     print("Undifind")
+
+with open("GetPic.jpg", "wb") as snapshot:
+    snapshot.write(img)
 
 # imgに撮影した画像を格納していきましょう
 # img = cv2.imread('/content/drive/MyDrive/IMG_0086.jpg')
@@ -33,7 +35,7 @@ else:
 # img = cv2.imread('/content/drive/MyDrive/CVCameraCalibrateImages/ElemImage/SAMPLE_NEAR.jpg')
 
 # 検出
-corners, ids, rejectedImgPoints = aruco.detectMarkers(img, p_dict)
+corners, ids, rejectedImgPoints = aruco.detectMarkers(snapshot, p_dict)
 
 if (rejectedImgPoints):
     DICT = True
