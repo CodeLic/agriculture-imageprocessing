@@ -29,13 +29,13 @@ with open("GetPic.jpg", "wb") as snapshot:
     snapshot.write(img)
 
 # imgに撮影した画像を格納していきましょう
-# img = cv2.imread('/content/drive/MyDrive/IMG_0086.jpg')
+image = cv2.imread('/home/pi/agriculture-imageprocessing/GetPic.jpg')
 
 # False用テスト
 # img = cv2.imread('/content/drive/MyDrive/CVCameraCalibrateImages/ElemImage/SAMPLE_NEAR.jpg')
 
 # 検出
-corners, ids, rejectedImgPoints = aruco.detectMarkers(snapshot, p_dict)
+corners, ids, rejectedImgPoints = aruco.detectMarkers(image, p_dict)
 
 if (rejectedImgPoints):
     DICT = True
