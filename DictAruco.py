@@ -2,6 +2,7 @@
 from urllib import response
 import cv2
 import requests
+import numpy as np
 
 # arucoのインスタンス
 aruco=cv2.aruco
@@ -20,16 +21,23 @@ response = requests.get(URL)
 img = response.content
 
 # 取得確認表示
+image = None
 if(img):
     print("GET_PICS")
+    image = np.asarray(bytearray(img), dtype='uint8')
+    image = cv2.imdecode(image, cv2.IMREAD_COLOR)
+    cv2.imshow('test', image)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+
 else:
     print("Undifind")
 
-with open("GetPic.jpg", "wb") as snapshot:
-    snapshot.write(img)
+#with open("GetPic.jpg", "wb") as snapshot:
+#    snapshot.write(img)
 
 # imgに撮影した画像を格納していきましょう
-image = cv2.imread('/home/pi/agriculture-imageprocessing/GetPic.jpg')
+# image = cv2.imread('/home/pi/agriculture-imageprocessing/GetPic.jpg')
 
 # False用テスト
 # img = cv2.imread('/content/drive/MyDrive/CVCameraCalibrateImages/ElemImage/SAMPLE_NEAR.jpg')
@@ -37,9 +45,18 @@ image = cv2.imread('/home/pi/agriculture-imageprocessing/GetPic.jpg')
 # 検出
 corners, ids, rejectedImgPoints = aruco.detectMarkers(image, p_dict)
 
-if (rejectedImgPoints):
-    DICT = True
-    print(DICT)
+#if (rejectedImgPoints):
+#    print(ids)
+#    print(corners)
+#    print(rejectedImgPoints)
+#    DICT = True
+#    print(DICT)
+#else:
+#    DICT = False
+#    print(DICT)
+if ids != None:
+    print('succeed on detecting')
+    print(ids)
+    print(corners)
 else:
-    DICT = False
-    print(DICT)
+    print('fail')
