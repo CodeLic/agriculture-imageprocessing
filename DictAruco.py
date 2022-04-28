@@ -33,7 +33,7 @@ def getCorners():
 
     else:
         print("Undefind")
-        return
+        return []
 
     #with open("GetPic.jpg", "wb") as snapshot:
     #    snapshot.write(img)
@@ -60,4 +60,4 @@ def getCorners():
         return corners[0]
     else:
         print('fail')
-        return
+        return []

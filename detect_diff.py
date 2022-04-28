@@ -5,7 +5,7 @@ def detect_diff():
   center = height / 2
   threshold = 10 # px
   corners = getCorners()
-  if corners != None:
+  if len(corners) != 0:
     # マーカーの取得成功
     left_bottom = corners[0]
     left_top = corners[1]
