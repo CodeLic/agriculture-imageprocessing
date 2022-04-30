@@ -57,7 +57,7 @@ def getCorners():
         print('succeed on detecting')
         print(ids)
         print(corners)
-        return corners[0]
+        return corners[0][0]
     else:
         print('fail')
         return []

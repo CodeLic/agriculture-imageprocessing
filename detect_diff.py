@@ -7,6 +7,7 @@ def detect_diff():
   corners = getCorners()
   if len(corners) != 0:
     # マーカーの取得成功
+    print(corners)
     left_bottom = corners[0]
     left_top = corners[1]
     right_top = corners[2]
@@ -17,7 +18,7 @@ def detect_diff():
     # 右側でも検査して結果がある程度以上ずれればマーカーが傾いていることも検知できる
       
     # 中点取得
-    marker_center = left_top[1] + left_bottom[1] / 2
+    marker_center = (left_top[1] + left_bottom[1]) / 2
     diff = center - marker_center
     if abs(diff) > threshold:
       print('ずれています')
